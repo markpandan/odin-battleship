@@ -11,6 +11,10 @@ export class Ship {
   isSunk() {
     return this.length >= this.hitCounter ? true : false;
   }
+
+  get getLength() {
+    return this.length;
+  }
 }
 
 export class GameBoard {
@@ -21,7 +25,18 @@ export class GameBoard {
       .map(() => Array(grid).fill(null));
   }
 
-  insertShip(x, y, ship) {}
+  insertShip(x, y, ship, isVertical = false) {
+    const length = ship.getLength;
+
+    if (this.board.length < x + length || this.board[x].length < y + length)
+      throw new Error("Ship was placed over the grid borders");
+
+    if (!isVertical)
+      this.board[x].splice(y, length, ...Array(length).fill(ship));
+    else {
+      for (let row = x; row < x + length; row++) this.board[row][y] = ship;
+    }
+  }
 
   receiveAttack(x, y) {}
 }
