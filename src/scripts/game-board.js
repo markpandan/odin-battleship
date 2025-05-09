@@ -1,23 +1,6 @@
-export class Ship {
-  constructor(length) {
-    this.length = length;
-    this.hitCounter = 0;
-  }
+import Ship from "./ship";
 
-  hit() {
-    this.hitCounter++;
-  }
-
-  isSunk() {
-    return this.length >= this.hitCounter ? true : false;
-  }
-
-  get getLength() {
-    return this.length;
-  }
-}
-
-export class GameBoard {
+export default class GameBoard {
   constructor(grid = 8) {
     // Creates an 8 x 8 board by default
     this.board = Array(grid)
@@ -76,11 +59,5 @@ export class GameBoard {
       string += "\n";
     });
     console.log(string);
-  }
-}
-
-export class Player {
-  constructor() {
-    this.gameBoard = new GameBoard();
   }
 }
