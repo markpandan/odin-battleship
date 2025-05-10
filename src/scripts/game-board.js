@@ -48,7 +48,7 @@ export default class GameBoard {
       throw new Error("Invalid Value");
     }
 
-    callback(isHit);
+    if (callback) callback(isHit);
   }
 
   areAllShipsSunked() {

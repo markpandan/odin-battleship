@@ -70,14 +70,25 @@ test("can confirm if attacking the specific cell of the grid has a ship placed",
   const [x, y] = [3, 4];
   gameBoard.receiveAttack(x, y);
 
-  expect(gameBoard.getBoardData[x][y]).toBe("ship hit");
+  expect(gameBoard.getBoardData[x][y]).toBe(gameBoard.shipHitDescription);
 });
 
 test("can detect if attacking the specific cell can show a miss hit", () => {
   const [x, y] = [5, 5];
   gameBoard.receiveAttack(x, y);
 
-  expect(gameBoard.getBoardData[x][y]).toBe("miss hit");
+  expect(gameBoard.getBoardData[x][y]).toBe(gameBoard.missHitDescription);
+});
+
+test("will not overwrite the map or invoke a callback if the specific cell has been attacked before", () => {
+  const [x, y, _] = validShipStartCoordinates[0];
+  const mockCallback = jest.fn();
+
+  gameBoard.receiveAttack(x, y + 1, mockCallback);
+  expect(mockCallback.mock.calls).toHaveLength(1);
+
+  gameBoard.receiveAttack(x, y + 1, mockCallback);
+  expect(mockCallback.mock.calls).toHaveLength(1);
 });
 
 test("throws an error if the coordinates of the attack is beyond the grid", () => {
