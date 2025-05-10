@@ -1,5 +1,3 @@
-// import { Ship, GameBoard, Player } from "./index";
-
 import GameBoard from "./scripts/game-board";
 import Ship from "./scripts/ship";
 import Player from "./scripts/player";
@@ -33,7 +31,7 @@ test("can place ships at specific coordinates", () => {
   shipOnGameBoard.splice(
     y,
     shipLength,
-    ...gameBoard.board[x].slice(y, y + shipLength)
+    ...gameBoard.getBoardData[x].slice(y, y + shipLength)
   );
 
   expect(
@@ -52,7 +50,7 @@ test("can place ships vertically", () => {
 
   const mockBoard = Array(grid).fill(battleShip, x, x + shipLength);
   const shipOnGameBoard = Array(grid);
-  gameBoard.board.forEach((value, index) => {
+  gameBoard.getBoardData.forEach((value, index) => {
     if (index >= x && index < x + shipLength) {
       shipOnGameBoard[index] = value[y];
     }
@@ -72,14 +70,14 @@ test("can confirm if attacking the specific cell of the grid has a ship placed",
   const [x, y] = [3, 4];
   gameBoard.receiveAttack(x, y);
 
-  expect(gameBoard.board[x][y]).toBe("ship hit");
+  expect(gameBoard.getBoardData[x][y]).toBe("ship hit");
 });
 
 test("can detect if attacking the specific cell can show a miss hit", () => {
   const [x, y] = [5, 5];
   gameBoard.receiveAttack(x, y);
 
-  expect(gameBoard.board[x][y]).toBe("miss hit");
+  expect(gameBoard.getBoardData[x][y]).toBe("miss hit");
 });
 
 test("throws an error if the coordinates of the attack is beyond the grid", () => {

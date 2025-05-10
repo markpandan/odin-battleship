@@ -1,86 +1,28 @@
-export class Ship {
-  constructor(length) {
-    this.length = length;
-    this.hitCounter = 0;
-  }
+import "./styles.css";
+import Player from "./scripts/player";
 
-  hit() {
-    this.hitCounter++;
-  }
+const gridSize = 8;
 
-  isSunk() {
-    return this.length >= this.hitCounter ? true : false;
-  }
+const player1 = new Player();
+const player2 = new Player();
+player1.createAndPlaceShip(3, 3, 4);
+player1.createAndPlaceShip(4, 4, 2);
 
-  get getLength() {
-    return this.length;
-  }
-}
+player2.createAndPlaceShip(4, 4, 2);
+player2.createAndPlaceShip(5, 5, 3, true);
+player2.createAndPlaceShip(0, 0, 5, true);
 
-export class GameBoard {
-  constructor(grid = 8) {
-    // Creates an 8 x 8 board by default
-    this.board = Array(grid)
-      .fill()
-      .map(() => Array(grid).fill(null));
+const players = [player1, player2];
 
-    this._missHitDescription = "miss hit";
-    this._shipHitDescription = "ship hit";
-  }
+const gameBoards = document.querySelectorAll(".game-board");
+gameBoards.forEach((gameBoard, index) => {
+  const battleBoard = players[index].getBoard;
+  battleBoard.printEveryBoardCells((cell) => {
+    const block = document.createElement("div");
+    block.classList.add("block");
+    block.textContent = cell;
+    block.addEventListener("click", () => {});
 
-  insertShip(x, y, ship, isVertical = false) {
-    const length = ship.getLength;
-
-    if (this.board.length < x + length || this.board[x].length < y + length)
-      throw new Error("Ship was placed over the grid borders");
-
-    if (!isVertical)
-      this.board[x].splice(y, length, ...Array(length).fill(ship));
-    else {
-      for (let row = x; row < x + length; row++) this.board[row][y] = ship;
-    }
-  }
-
-  // TODO: Apply the Ship.hit() method here.
-  receiveAttack(x, y) {
-    if (x >= this.board.length || y >= this.board[x].length)
-      throw new Error("Invalid coordinates placed");
-
-    if (this.board[x][y] instanceof Ship) {
-      this.board[x][y].hit();
-      this.board[x][y] = this._shipHitDescription;
-    } else {
-      this.board[x][y] = this._missHitDescription;
-    }
-  }
-
-  areAllShipsSunked() {
-    for (let row of this.board) {
-      for (let cell of row) if (cell instanceof Ship) return false;
-    }
-
-    return true;
-  }
-
-  printBoard() {
-    let string = "";
-    this.board.forEach((row) => {
-      row.forEach((cell) => {
-        if (cell == this._missHitDescription) string += "? ";
-        else if (cell == this._shipHitDescription) string += "X ";
-        else if (cell instanceof Ship) string += "S ";
-        else if (!cell) string += "- ";
-      });
-
-      string.trimEnd();
-      string += "\n";
-    });
-    console.log(string);
-  }
-}
-
-export class Player {
-  constructor() {
-    this.gameBoard = new GameBoard();
-  }
-}
+    gameBoard.appendChild(block);
+  });
+});
