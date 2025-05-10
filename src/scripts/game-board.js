@@ -7,8 +7,8 @@ export default class GameBoard {
       .fill()
       .map(() => Array(grid).fill(null));
 
-    this._missHitDescription = "miss hit";
-    this._shipHitDescription = "ship hit";
+    this.missHitDescription = "?";
+    this.shipHitDescription = "X";
   }
 
   get getBoardData() {
@@ -28,17 +28,27 @@ export default class GameBoard {
     }
   }
 
-  // TODO: Apply the Ship.hit() method here.
-  receiveAttack(x, y) {
+  receiveAttack(x, y, callback) {
     if (x >= this._board.length || y >= this._board[x].length)
       throw new Error("Invalid coordinates placed");
 
+    let isHit = false;
     if (this._board[x][y] instanceof Ship) {
       this._board[x][y].hit();
-      this._board[x][y] = this._shipHitDescription;
+      this._board[x][y] = this.shipHitDescription;
+      isHit = true;
+    } else if (!this._board[x][y]) {
+      this._board[x][y] = this.missHitDescription;
+    } else if (
+      this._board[x][y] === this.missHitDescription ||
+      this._board[x][y] === this.shipHitDescription
+    ) {
+      return;
     } else {
-      this._board[x][y] = this._missHitDescription;
+      throw new Error("Invalid Value");
     }
+
+    callback(isHit);
   }
 
   areAllShipsSunked() {
@@ -50,16 +60,15 @@ export default class GameBoard {
   }
 
   #printCell(cell) {
-    if (cell == this._missHitDescription) return "?";
-    else if (cell == this._shipHitDescription) return "X";
-    else if (cell instanceof Ship) return "S";
+    if (cell instanceof Ship) return "S";
     else if (!cell) return "-";
+    else return cell;
   }
 
   printEveryBoardCells(callback) {
-    this._board.forEach((row) => {
-      row.forEach((cell) => {
-        callback(this.#printCell(cell));
+    this._board.forEach((row, x) => {
+      row.forEach((cell, y) => {
+        callback(this.#printCell(cell), x, y);
       });
     });
   }
