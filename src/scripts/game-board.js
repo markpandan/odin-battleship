@@ -7,8 +7,8 @@ export default class GameBoard {
       .fill()
       .map(() => Array(grid).fill(null));
 
-    this.missHitDescription = "?";
-    this.shipHitDescription = "X";
+    this.MISS_HIT_DESCRIPTION = "?";
+    this.SHIP_HIT_DESCRIPTION = "X";
   }
 
   get getBoardData() {
@@ -35,13 +35,13 @@ export default class GameBoard {
     let isHit = false;
     if (this._board[x][y] instanceof Ship) {
       this._board[x][y].hit();
-      this._board[x][y] = this.shipHitDescription;
+      this._board[x][y] = this.SHIP_HIT_DESCRIPTION;
       isHit = true;
     } else if (!this._board[x][y]) {
-      this._board[x][y] = this.missHitDescription;
+      this._board[x][y] = this.MISS_HIT_DESCRIPTION;
     } else if (
-      this._board[x][y] === this.missHitDescription ||
-      this._board[x][y] === this.shipHitDescription
+      this._board[x][y] === this.MISS_HIT_DESCRIPTION ||
+      this._board[x][y] === this.SHIP_HIT_DESCRIPTION
     ) {
       return;
     } else {

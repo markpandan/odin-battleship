@@ -9,7 +9,7 @@ export default class Ship {
   }
 
   isSunk() {
-    return this.length >= this.hitCounter ? true : false;
+    return this.hitCounter >= this.length ? true : false;
   }
 
   get getLength() {

@@ -1,21 +1,23 @@
 import "./styles.css";
 import Player from "./scripts/player";
 
-const gridSize = 8;
+const player1 = new Player("player");
 
-const player1 = new Player();
-const player2 = new Player();
 player1.createAndPlaceShip(3, 3, 4);
 player1.createAndPlaceShip(4, 4, 2);
+player1.createAndPlaceShip(0, 1, 5, true);
 
-player2.createAndPlaceShip(4, 4, 2);
+const player2 = new Player("computer");
+player2.createAndPlaceShip(4, 4, 3);
 player2.createAndPlaceShip(5, 5, 3, true);
 player2.createAndPlaceShip(0, 0, 5, true);
 
 const players = [player1, player2];
 
-const gameBoards = document.querySelectorAll(".game-board");
-gameBoards.forEach((gameBoard, index) => {
+const [player1GameBoard, player2GameBoard] =
+  document.querySelectorAll(".game-board");
+
+[player1GameBoard, player2GameBoard].forEach((gameBoard, index) => {
   const battleBoard = players[index].getBoard;
   battleBoard.printEveryBoardCells((cell, x, y) => {
     const block = document.createElement("div");
@@ -26,19 +28,29 @@ gameBoards.forEach((gameBoard, index) => {
 
     gameBoard.appendChild(block);
   });
+});
 
-  gameBoard.addEventListener("click", (e) => {
-    const targetElement = e.target;
-    if (targetElement.className === gameBoard.className) {
-      console.log("Invalid Selection");
-      return;
-    }
+function changeBlockState(targetElement, isHit) {
+  if (isHit) targetElement.style.backgroundColor = "red";
+  else targetElement.style.backgroundColor = "grey";
+}
 
-    const dataset = targetElement.dataset;
+player2GameBoard.addEventListener("click", (e) => {
+  const targetElement = e.target;
+  if (targetElement.className === player2GameBoard.className) {
+    console.log("Invalid Selection");
+    return;
+  }
 
-    battleBoard.receiveAttack(dataset.row, dataset.column, (isHit) => {
-      if (isHit) targetElement.style.backgroundColor = "red";
-      else targetElement.style.backgroundColor = "grey";
+  const dataset = targetElement.dataset;
+  player2.getBoard.receiveAttack(dataset.row, dataset.column, (isHit) => {
+    changeBlockState(targetElement, isHit);
+
+    player1.autoReceiveAttack((x, y, isHit) => {
+      const targetElement = document.querySelector(
+        `.player-1-container .block[data-row="${x}"][data-column="${y}"]`
+      );
+      changeBlockState(targetElement, isHit);
     });
   });
 });
