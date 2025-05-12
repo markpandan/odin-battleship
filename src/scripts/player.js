@@ -7,11 +7,15 @@ export default class Player {
 
     if (operation == "player") {
       this.boardLength = this.gameBoard.getBoardData.length;
-      this.alreadyAttackedIndexes = {};
+      this.availableAttackCells = {};
       for (let i = 0; i < this.boardLength; i++) {
-        this.alreadyAttackedIndexes[i] = Array(this.boardLength).fill();
+        this.availableAttackCells[i] = [...Array(this.boardLength).keys()];
       }
     }
+  }
+
+  get getBoard() {
+    return this.gameBoard;
   }
 
   createAndPlaceShip(x, y, length, isVertical = false) {
@@ -21,45 +25,28 @@ export default class Player {
   }
 
   autoReceiveAttack(callback) {
-    const attackedIndexesKeys = Object.keys(this.alreadyAttackedIndexes);
+    const attackedIndexesKeys = Object.keys(this.availableAttackCells);
     if (!attackedIndexesKeys.length) {
       console.log("All cells have already been attacked");
       return;
     }
 
-    const checkCellsPerRow = (row) => {
-      const areAllCellsAttackedInTheRow =
-        this.alreadyAttackedIndexes[row].reduce((sum, current) => {
-          if (current) return sum + current;
-          else return sum;
-        }) === this.alreadyAttackedIndexes[row].length;
+    const x =
+      attackedIndexesKeys[
+        Math.floor(Math.random() * attackedIndexesKeys.length)
+      ];
 
-      if (areAllCellsAttackedInTheRow) delete this.alreadyAttackedIndexes[row];
-    };
+    const selectedColumn = Math.floor(
+      Math.random() * this.availableAttackCells[x].length
+    );
+    const y = this.availableAttackCells[x][selectedColumn];
 
-    let x, y;
-    while (attackedIndexesKeys.length) {
-      x =
-        attackedIndexesKeys[
-          Math.floor(Math.random() * attackedIndexesKeys.length)
-        ];
-      y = Math.floor(Math.random() * this.alreadyAttackedIndexes[x].length);
+    this.gameBoard.receiveAttack(x, y, (isHit) => {
+      callback(x, y, isHit);
+    });
 
-      if (!this.alreadyAttackedIndexes[x][y]) {
-        this.gameBoard.receiveAttack(x, y, (isHit) => {
-          callback(x, y, isHit);
-        });
-
-        this.alreadyAttackedIndexes[x][y] = true;
-        checkCellsPerRow(x);
-        break;
-      }
-
-      checkCellsPerRow(x);
-    }
-  }
-
-  get getBoard() {
-    return this.gameBoard;
+    this.availableAttackCells[x].splice(selectedColumn, 1);
+    if (this.availableAttackCells[x].length === 0)
+      delete this.availableAttackCells[x];
   }
 }
