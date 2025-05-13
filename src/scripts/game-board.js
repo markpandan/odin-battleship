@@ -15,17 +15,36 @@ export default class GameBoard {
     return this._board;
   }
 
+  #areShipsColliding(x, y, length, isVertical = false) {
+    if (!isVertical) {
+      for (let row = x; row < length; row++)
+        if (this._board[row][y] instanceof Ship) return true;
+    } else {
+      for (let column = y; column < length; column++)
+        if (this._board[x][column] instanceof Ship) return true;
+    }
+  }
+
   insertShip(x, y, ship, isVertical = false) {
     const length = ship.getLength;
 
-    if (this._board.length < x + length || this._board[x].length < y + length)
-      throw new Error("Ship was placed over the grid borders");
+    if (this._board.length < x + length || this._board[x].length < y + length) {
+      console.log("Ship was placed over the grid borders. Try again.");
+      return false;
+    }
+
+    if (this.#areShipsColliding(x, y, length, isVertical)) {
+      console.log("Ships are colliding. Try again.");
+      return false;
+    }
 
     if (!isVertical)
       this._board[x].splice(y, length, ...Array(length).fill(ship));
     else {
       for (let row = x; row < x + length; row++) this._board[row][y] = ship;
     }
+
+    return true;
   }
 
   receiveAttack(x, y, callback) {

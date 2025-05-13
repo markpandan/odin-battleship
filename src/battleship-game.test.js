@@ -1,6 +1,6 @@
 import GameBoard from "./scripts/game-board";
 import Ship from "./scripts/ship";
-import Player from "./scripts/player";
+// import Player from "./scripts/player";
 
 const shipLength = 3;
 const battleShip = new Ship(shipLength);
@@ -12,6 +12,7 @@ const gameBoard = new GameBoard(grid);
 const validShipStartCoordinates = [
   [3, 4, false],
   [0, 0, true],
+  [5, 2, true],
 ];
 
 // For the Ship class
@@ -41,7 +42,8 @@ test("can place ships at specific coordinates", () => {
 
 test("can avoid placing ships at coordinates where their length passes over the horizontal grid", () => {
   const [x, y] = [3, 6];
-  expect(() => gameBoard.insertShip(x, y, battleShip)).toThrow(Error);
+
+  expect(gameBoard.insertShip(x, y, battleShip)).toBeFalsy();
 });
 
 test("can place ships vertically", () => {
@@ -63,21 +65,27 @@ test("can place ships vertically", () => {
 
 test("can avoid placing ships at coordinates where their length passes over the vertical grid", () => {
   const [x, y] = [6, 0];
-  expect(() => gameBoard.insertShip(x, y, battleShip, true)).toThrow(Error);
+  expect(gameBoard.insertShip(x, y, battleShip, true)).toBeFalsy();
+});
+
+test("can avoid collisions when placing ships", () => {
+  gameBoard.insertShip(5, 2, battleShip, true);
+
+  expect(gameBoard.insertShip(7, 2, battleShip)).toBeFalsy();
 });
 
 test("can confirm if attacking the specific cell of the grid has a ship placed", () => {
   const [x, y] = [3, 4];
   gameBoard.receiveAttack(x, y);
 
-  expect(gameBoard.getBoardData[x][y]).toBe(gameBoard.shipHitDescription);
+  expect(gameBoard.getBoardData[x][y]).toBe(gameBoard.SHIP_HIT_DESCRIPTION);
 });
 
 test("can detect if attacking the specific cell can show a miss hit", () => {
   const [x, y] = [5, 5];
   gameBoard.receiveAttack(x, y);
 
-  expect(gameBoard.getBoardData[x][y]).toBe(gameBoard.missHitDescription);
+  expect(gameBoard.getBoardData[x][y]).toBe(gameBoard.MISS_HIT_DESCRIPTION);
 });
 
 test("will not overwrite the map or invoke a callback if the specific cell has been attacked before", () => {
@@ -96,8 +104,6 @@ test("throws an error if the coordinates of the attack is beyond the grid", () =
   expect(() => gameBoard.receiveAttack(x, y)).toThrow(Error);
 });
 
-test("can detect if a specific ship inside the board has been sunked", () => {});
-
 test("can detect if all of the ships inside the game board has already been sunked", () => {
   expect(gameBoard.areAllShipsSunked()).toBeFalsy();
 
@@ -110,6 +116,7 @@ test("can detect if all of the ships inside the game board has already been sunk
         gameBoard.receiveAttack(x, column);
   });
 
-  gameBoard.printBoard();
   expect(gameBoard.areAllShipsSunked()).toBeTruthy();
 });
+
+gameBoard.printBoard();

@@ -2,7 +2,6 @@ import "./styles.css";
 import Player from "./scripts/player";
 
 const player1 = new Player("player");
-
 player1.createAndPlaceShip(3, 3, 4);
 player1.createAndPlaceShip(4, 4, 2);
 player1.createAndPlaceShip(0, 1, 5, true);
@@ -35,8 +34,19 @@ function changeBlockState(targetElement, isHit) {
   else targetElement.style.backgroundColor = "grey";
 }
 
-player2GameBoard.addEventListener("click", (e) => {
-  const targetElement = e.target;
+function checkSunkenShips(gameBoardPlayer1, gameBoardPlayer2) {
+  const checkPlayer1Ships = gameBoardPlayer1.areAllShipsSunked();
+  const checkPlayer2Ships = gameBoardPlayer2.areAllShipsSunked();
+  if (checkPlayer1Ships || checkPlayer2Ships) {
+    if (checkPlayer1Ships) console.log("Player 2 Wins!");
+    if (checkPlayer2Ships) console.log("Player 1 Wins!");
+
+    player2GameBoard.removeEventListener("click", clickEvent);
+  }
+}
+
+function clickEvent(event) {
+  const targetElement = event.target;
   if (targetElement.className === player2GameBoard.className) {
     console.log("Invalid Selection");
     return;
@@ -53,4 +63,8 @@ player2GameBoard.addEventListener("click", (e) => {
       changeBlockState(targetElement, isHit);
     });
   });
-});
+
+  checkSunkenShips(player1.getBoard, player2.getBoard);
+}
+
+player2GameBoard.addEventListener("click", clickEvent);

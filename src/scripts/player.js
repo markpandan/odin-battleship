@@ -24,6 +24,8 @@ export default class Player {
     this.gameBoard.insertShip(x, y, newShip, isVertical);
   }
 
+  autoShipPlacement([shipLengths]) {}
+
   autoReceiveAttack(callback) {
     const attackedIndexesKeys = Object.keys(this.availableAttackCells);
     if (!attackedIndexesKeys.length) {
