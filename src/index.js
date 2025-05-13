@@ -1,29 +1,50 @@
 import "./styles.css";
 import Player from "./scripts/player";
 
-const player1 = new Player("player");
-player1.autoShipPlacement([4, 4, 3, 3, 2]);
-
-const player2 = new Player("computer");
-player2.autoShipPlacement([4, 4, 3, 3, 2]);
-
-const players = [player1, player2];
-
+let player1, player2;
+let players = [];
 const [player1GameBoard, player2GameBoard] =
   document.querySelectorAll(".game-board");
 
-[player1GameBoard, player2GameBoard].forEach((gameBoard, index) => {
-  const battleBoard = players[index].getBoard;
-  battleBoard.printEveryBoardCells((cell, x, y) => {
-    const block = document.createElement("div");
-    block.classList.add("block");
-    block.textContent = cell;
-    block.dataset.row = x;
-    block.dataset.column = y;
+function init() {
+  player1 = new Player("player");
+  player1.autoShipPlacement([4, 4, 3, 3, 2]);
 
-    gameBoard.appendChild(block);
+  player2 = new Player("computer");
+  player2.autoShipPlacement([4, 4, 3, 3, 2]);
+
+  players = [player1, player2];
+
+  displayCells();
+}
+
+function displayCells() {
+  [player1GameBoard, player2GameBoard].forEach((gameBoard, index) => {
+    const battleBoard = players[index].getBoard;
+    battleBoard.printEveryBoardCells((cell, x, y) => {
+      const block = document.createElement("div");
+      block.classList.add("block");
+
+      if (index == 0) block.textContent = cell;
+      block.dataset.row = x;
+      block.dataset.column = y;
+
+      gameBoard.appendChild(block);
+    });
   });
-});
+}
+
+init();
+
+function restartGame() {
+  player1GameBoard.textContent = "";
+  player2GameBoard.textContent = "";
+
+  player2GameBoard.addEventListener("click", clickEvent);
+  description.textContent = "";
+
+  init();
+}
 
 function changeBlockState(targetElement, isHit) {
   if (isHit) targetElement.style.backgroundColor = "red";
@@ -34,8 +55,16 @@ function checkSunkenShips(gameBoardPlayer1, gameBoardPlayer2) {
   const checkPlayer1Ships = gameBoardPlayer1.areAllShipsSunked();
   const checkPlayer2Ships = gameBoardPlayer2.areAllShipsSunked();
   if (checkPlayer1Ships || checkPlayer2Ships) {
-    if (checkPlayer1Ships) console.log("Player 2 Wins!");
-    if (checkPlayer2Ships) console.log("Player 1 Wins!");
+    let text = document.createElement("p");
+
+    if (checkPlayer1Ships) text.textContent = "Player 2 Wins!";
+    if (checkPlayer2Ships) text.textContent = "Player 1 Wins!";
+
+    description.appendChild(text);
+
+    const btnRestart = document.createElement("button");
+    btnRestart.textContent = "Play Again";
+    description.appendChild(btnRestart);
 
     player2GameBoard.removeEventListener("click", clickEvent);
   }
@@ -64,3 +93,6 @@ function clickEvent(event) {
 }
 
 player2GameBoard.addEventListener("click", clickEvent);
+
+const description = document.querySelector(".description");
+description.addEventListener("click", restartGame);

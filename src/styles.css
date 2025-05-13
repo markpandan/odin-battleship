@@ -1,11 +1,22 @@
-/* body {
-  background-color: rebeccapurple;
-} */
+* {
+  box-sizing: border-box;
+  margin: 0;
+}
+
+body {
+  margin-top: 24px;
+}
 
 .game-container {
   display: flex;
+
   justify-content: center;
-  gap: 16px;
+  gap: 32px;
+  margin: 24px 0px;
+}
+
+.game-container h2 {
+  margin-bottom: 24px;
 }
 
 .game-board {
@@ -24,4 +35,18 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.description {
+  font-weight: bolder;
+  font-size: xx-large;
+  text-align: center;
+}
+
+.description button {
+  background-color: blueviolet;
+  color: white;
+  border-radius: 8px;
+  padding: 8px;
+  font-size: large;
 }
