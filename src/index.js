@@ -2,14 +2,10 @@ import "./styles.css";
 import Player from "./scripts/player";
 
 const player1 = new Player("player");
-player1.createAndPlaceShip(3, 3, 4);
-player1.createAndPlaceShip(4, 4, 2);
-player1.createAndPlaceShip(0, 1, 5, true);
+player1.autoShipPlacement([4, 4, 3, 3, 2]);
 
 const player2 = new Player("computer");
-player2.createAndPlaceShip(4, 4, 3);
-player2.createAndPlaceShip(5, 5, 3, true);
-player2.createAndPlaceShip(0, 0, 5, true);
+player2.autoShipPlacement([4, 4, 3, 3, 2]);
 
 const players = [player1, player2];
 

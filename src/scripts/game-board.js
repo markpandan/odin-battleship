@@ -16,11 +16,11 @@ export default class GameBoard {
   }
 
   #areShipsColliding(x, y, length, isVertical = false) {
-    if (!isVertical) {
-      for (let row = x; row < length; row++)
+    if (isVertical) {
+      for (let row = x; row < x + length; row++)
         if (this._board[row][y] instanceof Ship) return true;
     } else {
-      for (let column = y; column < length; column++)
+      for (let column = y; column < y + length; column++)
         if (this._board[x][column] instanceof Ship) return true;
     }
   }

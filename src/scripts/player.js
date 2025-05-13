@@ -4,9 +4,9 @@ import Ship from "./ship";
 export default class Player {
   constructor(operation = "computer" || "player") {
     this.gameBoard = new GameBoard();
+    this.boardLength = this.gameBoard.getBoardData.length;
 
     if (operation == "player") {
-      this.boardLength = this.gameBoard.getBoardData.length;
       this.availableAttackCells = {};
       for (let i = 0; i < this.boardLength; i++) {
         this.availableAttackCells[i] = [...Array(this.boardLength).keys()];
@@ -24,7 +24,22 @@ export default class Player {
     this.gameBoard.insertShip(x, y, newShip, isVertical);
   }
 
-  autoShipPlacement([shipLengths]) {}
+  autoShipPlacement(shipLengths) {
+    let x, y, newShip, isVertical;
+
+    let shipLengthIndex = 0;
+    while (shipLengthIndex < shipLengths.length) {
+      newShip = new Ship(shipLengths[shipLengthIndex]);
+      x = Math.floor(Math.random() * this.boardLength);
+      y = Math.floor(Math.random() * this.boardLength);
+      isVertical = Math.floor(Math.random() * 2);
+
+      console.log(`${x}, ${y}, ${isVertical}`);
+      if (!this.gameBoard.insertShip(x, y, newShip, isVertical)) continue;
+
+      shipLengthIndex++;
+    }
+  }
 
   autoReceiveAttack(callback) {
     const attackedIndexesKeys = Object.keys(this.availableAttackCells);
